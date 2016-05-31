@@ -11,6 +11,8 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "StooqExchange.Core", "Stooq
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "StooqExchange.UnitTest", "StooqExchange.UnitTest\StooqExchange.UnitTest.xproj", "{8E172BB3-AEA3-4C0C-AAFF-702E21F656B7}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "StooqExchange.IntegrationTest", "StooqExchange.IntegrationTest\StooqExchange.IntegrationTest.xproj", "{0B6F7935-669E-4839-8661-708E757B86C9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +35,10 @@ Global
 		{8E172BB3-AEA3-4C0C-AAFF-702E21F656B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8E172BB3-AEA3-4C0C-AAFF-702E21F656B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8E172BB3-AEA3-4C0C-AAFF-702E21F656B7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0B6F7935-669E-4839-8661-708E757B86C9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0B6F7935-669E-4839-8661-708E757B86C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0B6F7935-669E-4839-8661-708E757B86C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0B6F7935-669E-4839-8661-708E757B86C9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
