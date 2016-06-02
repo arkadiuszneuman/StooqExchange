@@ -1,29 +1,51 @@
-﻿using StooqExchange.Core.Exceptions;
+﻿using System;
+using Moq;
+using StooqExchange.Core.Exceptions;
 using StooqExchange.Core.ExchangeRateFinder;
+using StooqExchange.Core.HttpDownloader;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions;
+using StooqExchange.Core;
 
 namespace StooqExchange.UnitTest
 {
     public class StooqCsvExchangeFinderTest
     {
+        private readonly Mock<IHttpDownloader> httpDownloaderMock = new Mock<IHttpDownloader>();
+        private readonly Mock<IDateTimeGetter> dateTimeGetterMock = new Mock<IDateTimeGetter>();
+
         [Theory, MemberData("Data")]
-        public void StooqCsvExchangeRateFinder_should_return_valid_exchange_rate(string csv, decimal expected)
+        public async void StooqCsvExchangeRateFinder_should_return_valid_exchange_rate(string csv, decimal expected)
         {
-            StooqCsvExchangeRateFinder finder = new StooqCsvExchangeRateFinder();
+            DateTime now = DateTime.Now;
 
-            decimal result = finder.FindExchange(csv);
+            httpDownloaderMock.Setup(x => x.DownloadAsync("WIG"))
+                .Returns(Task.Factory.StartNew(() => csv));
 
-            Assert.Equal(expected, result);
+            dateTimeGetterMock.Setup(x => x.GetDateTime())
+                .Returns(now);
+
+            StooqCsvExchangeRateFinder finder = new StooqCsvExchangeRateFinder(httpDownloaderMock.Object, dateTimeGetterMock.Object);
+
+            ExchangeRateValue result = await finder.FindExchangeAsync("WIG");
+
+            Assert.Equal(expected, result.Value);
         }
 
         [Theory, MemberData("InvalidData")]
         public void StooqCsvExchangeRateFinder_should_throw_on_invalid_csv_text(string csv)
         {
-            StooqCsvExchangeRateFinder finder = new StooqCsvExchangeRateFinder();
+            httpDownloaderMock.Setup(x => x.DownloadAsync("WIG"))
+                .Returns(Task.Factory.StartNew(() => csv));
 
-            Assert.Throws<ExchangeRateFindException>(() => finder.FindExchange(csv));
+            dateTimeGetterMock.Setup(x => x.GetDateTime())
+                .Returns(DateTime.Now);
+
+            StooqCsvExchangeRateFinder finder = new StooqCsvExchangeRateFinder(httpDownloaderMock.Object, dateTimeGetterMock.Object);
+
+            Assert.ThrowsAsync<ExchangeRateFindException>(async () => await finder.FindExchangeAsync("WIG"));
         }
 
         public static IEnumerable<object[]> Data

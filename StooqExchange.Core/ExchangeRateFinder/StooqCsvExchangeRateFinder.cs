@@ -1,12 +1,25 @@
 using StooqExchange.Core.Exceptions;
 using System;
+using System.Threading.Tasks;
+using StooqExchange.Core.HttpDownloader;
 
 namespace StooqExchange.Core.ExchangeRateFinder
 {
     public class StooqCsvExchangeRateFinder : IExchangeFinder
     {
-        public decimal FindExchange(string csv)
+        private readonly IHttpDownloader httpDownloader;
+        private readonly IDateTimeGetter dateTimeGetter;
+
+        public StooqCsvExchangeRateFinder(IHttpDownloader httpDownloader, IDateTimeGetter dateTimeGetter)
         {
+            this.httpDownloader = httpDownloader;
+            this.dateTimeGetter = dateTimeGetter;
+        }
+
+        public async Task<ExchangeRateValue> FindExchangeAsync(string stockIndex)
+        {
+            string csv = await httpDownloader.DownloadAsync(stockIndex);
+
             var splittedData = csv.Split(new[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
             if (splittedData.Length != 2)
                 ThrowInvalidCsvData();
@@ -22,7 +35,7 @@ namespace StooqExchange.Core.ExchangeRateFinder
             if (!decimal.TryParse(exchangeAsString, out exchangeResult))
                 ThrowInvalidCsvData();
 
-            return exchangeResult;
+            return new ExchangeRateValue(dateTimeGetter.GetDateTime(), exchangeResult);
         }
 
         private void ThrowInvalidCsvData()

@@ -1,7 +1,9 @@
-﻿namespace StooqExchange.Core.ExchangeRateFinder
+﻿using System.Threading.Tasks;
+
+namespace StooqExchange.Core.ExchangeRateFinder
 {
     public interface IExchangeFinder
     {
-        decimal FindExchange(string text);
+        Task<ExchangeRateValue> FindExchangeAsync(string stockIndex);
     }
 }
