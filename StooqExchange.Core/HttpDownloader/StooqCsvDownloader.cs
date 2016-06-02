@@ -1,5 +1,6 @@
 ﻿using System.Net.Http;
 using System.Threading.Tasks;
+using StooqExchange.Core.Exceptions;
 
 namespace StooqExchange.Core.HttpDownloader
 {
@@ -12,7 +13,11 @@ namespace StooqExchange.Core.HttpDownloader
                 await httpClient.GetAsync($"http://stooq.pl/q/l/?s={stockIndex}&f=sd2t2ohlcv&h&e=csv"))
             {
                 response.EnsureSuccessStatusCode();
-                return await response.Content.ReadAsStringAsync();
+                string result = await response.Content.ReadAsStringAsync();
+                if (result.Contains($"{stockIndex.ToUpper()},B/D,B/D,B/D,B/D,B/D,B/D,B/D"))
+                    throw new ExchangeRateFindException($"Nie znaleziono indeksu {stockIndex}");
+
+                return result;
             }
         }
     }
