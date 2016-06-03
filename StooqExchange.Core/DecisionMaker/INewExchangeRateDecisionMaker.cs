@@ -2,7 +2,7 @@
 
 namespace StooqExchange.Core.DecisionMaker
 {
-    public interface IDecisionMaker
+    public interface INewExchangeRateDecisionMaker
     {
         bool ShouldRateBeAdd(ExchangeRate exchangeRate, ExchangeRateValue newExchangeRate);
     }
