@@ -12,9 +12,12 @@ namespace StooqExchange
     {
         public static void Main(string[] args)
         {
+            Console.WriteLine("Press Q to quit");
+
             IContainer container = new StooqContainer().CreateContainer();
             using (var lifetimeScope = container.BeginLifetimeScope())
             {
+
                 StooqExchangeRunner exchangeRunner = lifetimeScope.Resolve<StooqExchangeRunner>();
                 exchangeRunner.RunInfinite("WIG", "WIG20");
 
