@@ -15,7 +15,7 @@ namespace StooqExchange.Core.HttpDownloader
                 response.EnsureSuccessStatusCode();
                 string result = await response.Content.ReadAsStringAsync();
                 if (result.Contains($"{stockIndex.ToUpper()},B/D,B/D,B/D,B/D,B/D,B/D,B/D"))
-                    throw new ExchangeRateFindException($"Nie znaleziono indeksu {stockIndex}");
+                    throw new ExchangeRateFindException($"Cannot find index {stockIndex}");
 
                 return result;
             }

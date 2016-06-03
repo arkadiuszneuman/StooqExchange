@@ -19,7 +19,7 @@ namespace StooqExchange.Core.DecisionMaker
 
             ExchangeRateValue exchangeRateValue = exchangeRate.Values.OrderBy(d => d.DownloadTime).Last();
             if (exchangeRateValue.DownloadTime > newExchangeRate.DownloadTime)
-                throw new InvalidExchangeRateException("Data pobrania nowego indeksu gie³dowego nieprawid³owa");
+                throw new InvalidExchangeRateException("Download time from new stock index is invalid");
 
             return exchangeRateValue.Value != newExchangeRate.Value;
         }

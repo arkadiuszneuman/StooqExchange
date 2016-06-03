@@ -28,7 +28,7 @@ namespace StooqExchange.IntegrationTest
             ExchangeRateFindException exception = Assert.ThrowsAsync<ExchangeRateFindException>(
                 async () => await downloader.DownloadAsync("index_doesnt_exists")).Result;
             
-            Assert.Equal("Nie znaleziono indeksu index_doesnt_exists", exception.Message);
+            Assert.Equal("Cannot find index index_doesnt_exists", exception.Message);
         }
 
         [Fact]
