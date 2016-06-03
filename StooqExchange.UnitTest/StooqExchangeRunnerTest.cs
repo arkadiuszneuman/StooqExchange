@@ -8,6 +8,7 @@ using StooqExchange.Core.ExchangeRateSaver;
 using Xunit;
 using StooqExchange.Core.DecisionMaker;
 using System.Linq;
+using StooqExchange.Core.Logger;
 
 namespace StooqExchange.UnitTest
 {
@@ -16,12 +17,13 @@ namespace StooqExchange.UnitTest
         private readonly Mock<IExchangeFinder> exchangeFinderMock = new Mock<IExchangeFinder>();
         private readonly Mock<IExchangeRateFileManager> exchangeRateFileManagerMock = new Mock<IExchangeRateFileManager>();
         private readonly Mock<INewExchangeRateDecisionMaker> decisionMakerMock = new Mock<INewExchangeRateDecisionMaker>();
+        private readonly Mock<IStooqLogger> stooqLoggerMock = new Mock<IStooqLogger>();
         private readonly StooqExchangeRunner exchangeRunner;
 
         public StooqExchangeRunnerTest()
         {
             exchangeRunner = new StooqExchangeRunner(exchangeFinderMock.Object,
-                exchangeRateFileManagerMock.Object, decisionMakerMock.Object);
+                exchangeRateFileManagerMock.Object, decisionMakerMock.Object, stooqLoggerMock.Object);
         }
 
         [Fact]

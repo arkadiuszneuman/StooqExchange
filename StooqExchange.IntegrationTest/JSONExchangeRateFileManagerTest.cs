@@ -7,12 +7,16 @@ using Xunit;
 using Microsoft.Extensions.Configuration;
 using StooqExchange.Core;
 using System.IO;
+using Moq;
+using StooqExchange.Core.Logger;
 
 namespace StooqExchange.IntegrationTest
 {
     public class JSONExchangeRateFileManagerTest
     {
-        private readonly JSONExchangeRateFileManager fileManager = new JSONExchangeRateFileManager();
+        private readonly Mock<IStooqLogger> loggerMock = new Mock<IStooqLogger>();
+        private readonly JSONExchangeRateFileManager fileManager;
+
 
         public JSONExchangeRateFileManagerTest()
         {
@@ -20,6 +24,7 @@ namespace StooqExchange.IntegrationTest
                 .AddEnvironmentVariables("APPDATA")
                 .Build();
 
+            fileManager = new JSONExchangeRateFileManager(loggerMock.Object);
             fileManager.Path = Path.Combine(config.GetChildren().First().Value, "exchange-rates.json");
         }
 

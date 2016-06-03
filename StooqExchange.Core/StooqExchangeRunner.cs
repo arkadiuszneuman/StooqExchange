@@ -4,8 +4,11 @@ using System.Linq;
 using StooqExchange.Core.ExchangeRateFinder;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.PlatformAbstractions;
 using StooqExchange.Core.DecisionMaker;
+using StooqExchange.Core.Exceptions;
 using StooqExchange.Core.ExchangeRateSaver;
+using StooqExchange.Core.Logger;
 
 namespace StooqExchange.Core
 {
@@ -14,51 +17,75 @@ namespace StooqExchange.Core
         private readonly IExchangeFinder exchangeFinder;
         private readonly IExchangeRateFileManager fileManager;
         private readonly INewExchangeRateDecisionMaker decisionMaker;
+        private readonly IStooqLogger logger;
+
         private readonly object syncObject = new object();
         private bool isActionExecuting;
+        private bool stopExecuting;
 
         public StooqExchangeRunner(IExchangeFinder exchangeFinder, IExchangeRateFileManager fileManager,
-            INewExchangeRateDecisionMaker decisionMaker)
+            INewExchangeRateDecisionMaker decisionMaker, IStooqLogger logger)
         {
             this.exchangeFinder = exchangeFinder;
             this.fileManager = fileManager;
             this.decisionMaker = decisionMaker;
+            this.logger = logger;
         }
 
         public async void RunOnce(params string[] stockIndices)
         {
-            lock (syncObject)
+            try
             {
-                if (isActionExecuting)
-                    return;
+                lock (syncObject)
+                {
+                    if (isActionExecuting)
+                        return;
 
-                isActionExecuting = true;
+                    isActionExecuting = true;
+                }
+
+                List<ExchangeRate> exchangeRates = fileManager.Get().ToList();
+                bool saveValues = false;
+
+                foreach (string stockIndex in stockIndices)
+                {
+                    try
+                    {
+                        ExchangeRateValue exchangeRateValue = await exchangeFinder.FindExchangeAsync(stockIndex);
+                        ExchangeRate existingExchangeRate = exchangeRates.SingleOrDefault(e => e.Name == stockIndex);
+                        if (existingExchangeRate == null)
+                        {
+                            exchangeRates.Add(new ExchangeRate(stockIndex, new List<ExchangeRateValue>(new[] {exchangeRateValue})));
+                            saveValues = true;
+                        }
+                        else if (decisionMaker.ShouldRateBeAdd(existingExchangeRate, exchangeRateValue))
+                        {
+                            existingExchangeRate.Values.Add(exchangeRateValue);
+                            saveValues = true;
+                        }
+                    }
+                    catch (Exception e) when (e is ExchangeRateFindException || e is InvalidExchangeRateException)
+                    {
+                        logger.Warning(e);
+                    }
+                    catch (Exception e)
+                    {
+                        logger.Error(e);
+                        stopExecuting = true;
+                    }
+                }
+
+                if (saveValues)
+                    fileManager.Save(exchangeRates);
+
+                lock (syncObject)
+                    isActionExecuting = false;
             }
-
-            List<ExchangeRate> exchangeRates = fileManager.Get().ToList();
-            bool saveValues = false;
-
-            foreach (string stockIndex in stockIndices)
+            catch (Exception e)
             {
-                ExchangeRateValue exchangeRateValue = await exchangeFinder.FindExchangeAsync(stockIndex);
-                ExchangeRate existingExchangeRate = exchangeRates.SingleOrDefault(e => e.Name == stockIndex);
-                if (existingExchangeRate == null)
-                {
-                    exchangeRates.Add(new ExchangeRate(stockIndex, new List<ExchangeRateValue>(new[] { exchangeRateValue })));
-                    saveValues = true;
-                }
-                else if (decisionMaker.ShouldRateBeAdd(existingExchangeRate, exchangeRateValue))
-                {
-                    existingExchangeRate.Values.Add(exchangeRateValue);
-                    saveValues = true;
-                }
+                logger.Error(e);
+                stopExecuting = true;
             }
-
-            if (saveValues)
-                fileManager.Save(exchangeRates);
-
-            lock (syncObject)
-                isActionExecuting = false;
         }
 
         public void RunInfinite(params string[] stockIndices)
@@ -70,9 +97,12 @@ namespace StooqExchange.Core
         {
             while (true)
             {
-                action();
-                Task task = Task.Delay(interval);
-                await task;
+                if (!stopExecuting)
+                {
+                    action();
+                    Task task = Task.Delay(interval);
+                    await task;
+                }
             }
         }
     }

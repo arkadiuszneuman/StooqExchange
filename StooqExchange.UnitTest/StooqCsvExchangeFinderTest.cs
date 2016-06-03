@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Xunit;
 using Xunit.Extensions;
 using StooqExchange.Core;
+using StooqExchange.Core.Logger;
 
 namespace StooqExchange.UnitTest
 {
@@ -15,6 +16,15 @@ namespace StooqExchange.UnitTest
     {
         private readonly Mock<IHttpDownloader> httpDownloaderMock = new Mock<IHttpDownloader>();
         private readonly Mock<IDateTimeGetter> dateTimeGetterMock = new Mock<IDateTimeGetter>();
+        private readonly Mock<IStooqLogger> loggerMock = new Mock<IStooqLogger>();
+
+        private readonly StooqCsvExchangeRateFinder finder;
+
+        public StooqCsvExchangeFinderTest()
+        {
+            finder = new StooqCsvExchangeRateFinder(httpDownloaderMock.Object,
+               dateTimeGetterMock.Object, loggerMock.Object);
+        }
 
         [Theory, MemberData("Data")]
         public async void StooqCsvExchangeRateFinder_should_return_valid_exchange_rate(string csv, decimal expected)
@@ -26,8 +36,6 @@ namespace StooqExchange.UnitTest
 
             dateTimeGetterMock.Setup(x => x.GetDateTime())
                 .Returns(now);
-
-            StooqCsvExchangeRateFinder finder = new StooqCsvExchangeRateFinder(httpDownloaderMock.Object, dateTimeGetterMock.Object);
 
             ExchangeRateValue result = await finder.FindExchangeAsync("WIG");
 
@@ -42,8 +50,6 @@ namespace StooqExchange.UnitTest
 
             dateTimeGetterMock.Setup(x => x.GetDateTime())
                 .Returns(DateTime.Now);
-
-            StooqCsvExchangeRateFinder finder = new StooqCsvExchangeRateFinder(httpDownloaderMock.Object, dateTimeGetterMock.Object);
 
             Assert.ThrowsAsync<ExchangeRateFindException>(async () => await finder.FindExchangeAsync("WIG"));
         }
