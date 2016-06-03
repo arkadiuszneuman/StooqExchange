@@ -47,6 +47,44 @@ namespace StooqExchange.IntegrationTest
             Assert.Equal(expectedExchangeRates, loadedExchangeRates, new ExchangeRateEqualityComparer());
         }
 
+        [Theory, MemberData("Data")]
+        public void JSONExchangeRateFileManager_get_should_load_data_once(ExchangeRate[] expectedExchangeRates, string json)
+        {
+            Mock<JSONExchangeRateFileManager> fileManagerMock = new Mock<JSONExchangeRateFileManager>(loggerMock.Object)
+            {
+                CallBase = true
+            };
+
+            File.WriteAllText(fileManager.Path, json);
+
+            fileManagerMock.Object.Get();
+            fileManagerMock.Object.Get();
+            fileManagerMock.Object.Get();
+
+            File.Delete(fileManager.Path);
+
+            fileManagerMock.Verify(x => x.Load(), Times.Once);
+        }
+
+        [Theory, MemberData("Data")]
+        public void JSONExchangeRateFileManager_get_should_load_valid_data(ExchangeRate[] expectedExchangeRates, string json)
+        {
+            Mock<JSONExchangeRateFileManager> fileManagerMock = new Mock<JSONExchangeRateFileManager>(loggerMock.Object)
+            {
+                CallBase = true
+            };
+            fileManagerMock.Setup(x => x.Load())
+                .Returns(expectedExchangeRates);
+
+            File.WriteAllText(fileManager.Path, json);
+
+            var result = fileManagerMock.Object.Get();
+
+            File.Delete(fileManager.Path);
+
+            Assert.Equal(expectedExchangeRates, result, new ExchangeRateEqualityComparer());
+        }
+
         public static IEnumerable<object[]> Data
         {
             get

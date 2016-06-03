@@ -5,5 +5,7 @@ namespace StooqExchange.Core.ExchangeRateSaver
     public interface IExchangeRateFileManager
     {
         void Save(IEnumerable<ExchangeRate> exchangeRate);
+        IEnumerable<ExchangeRate> Load();
+        IEnumerable<ExchangeRate> Get();
     }
 }

@@ -10,21 +10,36 @@ namespace StooqExchange.Core.ExchangeRateSaver
 {
     public class JSONExchangeRateFileManager : IExchangeRateFileManager
     {
-        public void Save(IEnumerable<ExchangeRate> exchangeRates)
+        private ICollection<ExchangeRate> loadedExchangeRates;
+
+        public virtual void Save(IEnumerable<ExchangeRate> exchangeRates)
         {
             string json = JsonConvert.SerializeObject(exchangeRates);
             File.WriteAllText(Path, json);
+
+            loadedExchangeRates = exchangeRates.ToList();
         }
 
-        public IEnumerable<ExchangeRate> Load()
+        public virtual IEnumerable<ExchangeRate> Load()
         {
             if (!File.Exists(Path))
                 return Enumerable.Empty<ExchangeRate>();
 
             string json = File.ReadAllText(Path);
-            return JsonConvert.DeserializeObject<IEnumerable<ExchangeRate>>(json);
+            var exchangeRates = JsonConvert.DeserializeObject<IEnumerable<ExchangeRate>>(json);
+
+            return exchangeRates ?? Enumerable.Empty<ExchangeRate>();
         }
 
-        public string Path { get; set; } = System.IO.Path.Combine(Assembly.GetEntryAssembly().Location, "exchange-rates.json");
+        public virtual IEnumerable<ExchangeRate> Get()
+        {
+            if (loadedExchangeRates == null)
+                loadedExchangeRates = Load().ToList();
+
+            return loadedExchangeRates;
+        }
+
+        public string Path { get; set; } = System.IO.Path.Combine(System.IO.Path
+            .GetDirectoryName(Assembly.GetEntryAssembly().Location), "exchange-rates.json");
     }
 }
