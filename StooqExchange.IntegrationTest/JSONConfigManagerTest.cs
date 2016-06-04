@@ -27,7 +27,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_should_save_valid_json_file(Config config, string expectedJson)
+        public void Should_save_valid_json_file(Config config, string expectedJson)
         {
             configManager.Save(config);
 
@@ -39,7 +39,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_should_load_valid_config(Config expectedConfig, string json)
+        public void Should_load_valid_config(Config expectedConfig, string json)
         {
             File.WriteAllText(configManager.Path, json);
 
@@ -51,7 +51,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_get_should_load_data_once(Config expectedConfig, string json)
+        public void Get_method_should_load_data_once(Config expectedConfig, string json)
         {
             Mock<JSONConfigManager> configManagerMock = new Mock<JSONConfigManager>(loggerMock.Object)
             {
@@ -70,7 +70,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_get_should_load_valid_data(Config expectedConfig, string json)
+        public void Get_method_should_load_valid_data(Config expectedConfig, string json)
         {
             Mock<JSONConfigManager> configManagerMock = new Mock<JSONConfigManager>(loggerMock.Object)
             {

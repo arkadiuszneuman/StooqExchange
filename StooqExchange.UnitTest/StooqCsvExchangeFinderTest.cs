@@ -27,7 +27,7 @@ namespace StooqExchange.UnitTest
         }
 
         [Theory, MemberData("Data")]
-        public async void StooqCsvExchangeRateFinder_should_return_valid_exchange_rate(string csv, decimal expected)
+        public async void Should_return_valid_exchange_rate(string csv, decimal expected)
         {
             DateTime now = DateTime.Now;
 
@@ -43,7 +43,7 @@ namespace StooqExchange.UnitTest
         }
 
         [Theory, MemberData("InvalidData")]
-        public void StooqCsvExchangeRateFinder_should_throw_on_invalid_csv_text(string csv)
+        public void Should_throw_on_invalid_csv_text(string csv)
         {
             httpDownloaderMock.Setup(x => x.DownloadAsync("WIG"))
                 .Returns(Task.Factory.StartNew(() => csv));

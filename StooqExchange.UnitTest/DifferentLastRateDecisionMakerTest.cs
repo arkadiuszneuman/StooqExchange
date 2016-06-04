@@ -13,28 +13,28 @@ namespace StooqExchange.UnitTest
             = new DifferentLastRateNewExchangeRateDecisionMaker();
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_throw_if_exchange_rate_is_null()
+        public void Should_throw_if_exchange_rate_is_null()
         {
             Assert.Throws<ArgumentNullException>(() => decisionMaker.ShouldRateBeAdd(
                 null, new ExchangeRateValue()));
         }
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_throw_if_new_exchange_rate_is_null()
+        public void Should_throw_if_new_exchange_rate_is_null()
         {
             Assert.Throws<ArgumentNullException>(() => decisionMaker.ShouldRateBeAdd(
                 new ExchangeRate("WIG", new List<ExchangeRateValue>()), null));
         }
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_throw_if_list_is_null()
+        public void Should_throw_if_list_is_null()
         {
             Assert.Throws<ArgumentNullException>(() => decisionMaker.ShouldRateBeAdd(
                 new ExchangeRate("WIG", null), new ExchangeRateValue()));
         }
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_return_true_if_value_collection_is_empty()
+        public void Should_return_true_if_value_collection_is_empty()
         {
             bool result = decisionMaker.ShouldRateBeAdd(
                 new ExchangeRate("WIG", new List<ExchangeRateValue>()), new ExchangeRateValue());
@@ -43,7 +43,7 @@ namespace StooqExchange.UnitTest
         }
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_return_true_if_new_exchange_rate_value_is_different_than_last()
+        public void Should_return_true_if_new_exchange_rate_value_is_different_than_last()
         {
             bool result = decisionMaker.ShouldRateBeAdd(
                 new ExchangeRate("WIG", new List<ExchangeRateValue>()
@@ -56,7 +56,7 @@ namespace StooqExchange.UnitTest
         }
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_return_false_if_new_exchange_rate_value_equals_last()
+        public void Should_return_false_if_new_exchange_rate_value_equals_last()
         {
             bool result = decisionMaker.ShouldRateBeAdd(
                 new ExchangeRate("WIG", new List<ExchangeRateValue>()
@@ -69,7 +69,7 @@ namespace StooqExchange.UnitTest
         }
 
         [Fact]
-        public void DifferentLastRateDecisionMaker_should_throw_if_new_exchange_rate_date_is_earlier_then_last_exchange_rate()
+        public void Should_throw_if_new_exchange_rate_date_is_earlier_then_last_exchange_rate()
         {
             Assert.Throws<InvalidExchangeRateException>(() => decisionMaker.ShouldRateBeAdd(
                 new ExchangeRate("WIG", new List<ExchangeRateValue>()

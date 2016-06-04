@@ -28,7 +28,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_should_save_valid_json_file(ExchangeRate[] exchangeRates, string expectedJson)
+        public void Should_save_valid_json_file(ExchangeRate[] exchangeRates, string expectedJson)
         {
             fileManager.Save(exchangeRates);
 
@@ -40,7 +40,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_should_load_valid_exchange_rates(ExchangeRate[] expectedExchangeRates, string json)
+        public void Should_load_valid_exchange_rates(ExchangeRate[] expectedExchangeRates, string json)
         {
             File.WriteAllText(fileManager.Path, json);
 
@@ -52,7 +52,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_get_should_load_data_once(ExchangeRate[] expectedExchangeRates, string json)
+        public void Get_method_should_load_data_once(ExchangeRate[] expectedExchangeRates, string json)
         {
             Mock<JSONExchangeRateArchiveManager> fileManagerMock = new Mock<JSONExchangeRateArchiveManager>(loggerMock.Object)
             {
@@ -71,7 +71,7 @@ namespace StooqExchange.IntegrationTest
         }
 
         [Theory, MemberData("Data")]
-        public void JSONExchangeRateFileManager_get_should_load_valid_data(ExchangeRate[] expectedExchangeRates, string json)
+        public void Get_method_should_load_valid_data(ExchangeRate[] expectedExchangeRates, string json)
         {
             Mock<JSONExchangeRateArchiveManager> fileManagerMock = new Mock<JSONExchangeRateArchiveManager>(loggerMock.Object)
             {
