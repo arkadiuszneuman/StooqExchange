@@ -4,7 +4,7 @@ using StooqExchange.Core.Exceptions;
 
 namespace StooqExchange.Core.DecisionMaker
 {
-    public class DifferentLastRateNewExchangeRateDecisionMaker : INewExchangeRateDecisionMaker
+    public class DifferentLastRateNewValueDecisionMaker : INewValueDecisionMaker
     {
         public bool ShouldRateBeAdd(ExchangeRate exchangeRate, ExchangeRateValue newExchangeRate)
         {

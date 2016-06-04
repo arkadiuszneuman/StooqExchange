@@ -17,7 +17,7 @@ namespace StooqExchange.Core
     {
         private readonly IExchangeFinder exchangeFinder;
         private readonly IExchangeRateArchiveManager archiveManager;
-        private readonly INewExchangeRateDecisionMaker decisionMaker;
+        private readonly INewValueDecisionMaker decisionMaker;
         private readonly IConfigManager configManager;
         private readonly IStooqLogger logger;
 
@@ -26,7 +26,7 @@ namespace StooqExchange.Core
         private bool stopExecuting;
 
         public StooqExchangeRunner(IExchangeFinder exchangeFinder, IExchangeRateArchiveManager archiveManager,
-            INewExchangeRateDecisionMaker decisionMaker, IConfigManager configManager, IStooqLogger logger)
+            INewValueDecisionMaker decisionMaker, IConfigManager configManager, IStooqLogger logger)
         {
             this.exchangeFinder = exchangeFinder;
             this.archiveManager = archiveManager;

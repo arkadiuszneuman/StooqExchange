@@ -17,7 +17,7 @@ namespace StooqExchange.UnitTest
     {
         private readonly Mock<IExchangeFinder> exchangeFinderMock = new Mock<IExchangeFinder>();
         private readonly Mock<JSONExchangeRateArchiveManager> exchangeRateArchiveManagerMock;
-        private readonly Mock<INewExchangeRateDecisionMaker> decisionMakerMock = new Mock<INewExchangeRateDecisionMaker>();
+        private readonly Mock<INewValueDecisionMaker> decisionMakerMock = new Mock<INewValueDecisionMaker>();
         private readonly Mock<IStooqLogger> stooqLoggerMock = new Mock<IStooqLogger>();
         private readonly Mock<IConfigManager> configManager = new Mock<IConfigManager>();
         private readonly StooqExchangeRunner exchangeRunner;

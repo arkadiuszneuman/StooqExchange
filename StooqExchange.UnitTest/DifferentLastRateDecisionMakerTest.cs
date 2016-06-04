@@ -9,8 +9,8 @@ namespace StooqExchange.UnitTest
 {
     public class DifferentLastRateDecisionMakerTest
     {
-        private readonly DifferentLastRateNewExchangeRateDecisionMaker decisionMaker 
-            = new DifferentLastRateNewExchangeRateDecisionMaker();
+        private readonly DifferentLastRateNewValueDecisionMaker decisionMaker 
+            = new DifferentLastRateNewValueDecisionMaker();
 
         [Fact]
         public void Should_throw_if_exchange_rate_is_null()
