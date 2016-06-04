@@ -5,6 +5,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Autofac;
 using StooqExchange.Core;
+using StooqExchange.Core.ConfigManager;
+using StooqExchange.Core.Logger;
 
 namespace StooqExchange
 {
@@ -17,15 +19,25 @@ namespace StooqExchange
             IContainer container = new StooqContainer().CreateContainer();
             using (var lifetimeScope = container.BeginLifetimeScope())
             {
+                var configManager = lifetimeScope.Resolve<IConfigManager>();
+                var logger = lifetimeScope.Resolve<IStooqLogger>();
+                var exchangeRunner = lifetimeScope.Resolve<StooqExchangeRunner>();
 
-                StooqExchangeRunner exchangeRunner = lifetimeScope.Resolve<StooqExchangeRunner>();
-                exchangeRunner.RunInfinite("WIG", "WIG20");
-
-                while (true)
+                try
                 {
-                    ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
-                    if (consoleKeyInfo.Key == ConsoleKey.Q)
-                        break;
+                    Config config = configManager.Get();
+                    exchangeRunner.RunInfinite(config.StockIndices);
+
+                    while (true)
+                    {
+                        ConsoleKeyInfo consoleKeyInfo = Console.ReadKey();
+                        if (consoleKeyInfo.Key == ConsoleKey.Q)
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    logger.Error(e);
                 }
             }
         }

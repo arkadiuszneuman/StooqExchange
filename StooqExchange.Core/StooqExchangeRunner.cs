@@ -5,6 +5,7 @@ using StooqExchange.Core.ExchangeRateFinder;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.PlatformAbstractions;
+using StooqExchange.Core.ConfigManager;
 using StooqExchange.Core.DecisionMaker;
 using StooqExchange.Core.Exceptions;
 using StooqExchange.Core.ExchangeRateArchiveManager;
@@ -17,6 +18,7 @@ namespace StooqExchange.Core
         private readonly IExchangeFinder exchangeFinder;
         private readonly IExchangeRateArchiveManager archiveManager;
         private readonly INewExchangeRateDecisionMaker decisionMaker;
+        private readonly IConfigManager configManager;
         private readonly IStooqLogger logger;
 
         private readonly object syncObject = new object();
@@ -24,11 +26,12 @@ namespace StooqExchange.Core
         private bool stopExecuting;
 
         public StooqExchangeRunner(IExchangeFinder exchangeFinder, IExchangeRateArchiveManager archiveManager,
-            INewExchangeRateDecisionMaker decisionMaker, IStooqLogger logger)
+            INewExchangeRateDecisionMaker decisionMaker, IConfigManager configManager, IStooqLogger logger)
         {
             this.exchangeFinder = exchangeFinder;
             this.archiveManager = archiveManager;
             this.decisionMaker = decisionMaker;
+            this.configManager = configManager;
             this.logger = logger;
         }
 
@@ -90,7 +93,10 @@ namespace StooqExchange.Core
 
         public void RunInfinite(params string[] stockIndices)
         {
-            RepeatAction(() => RunOnce(stockIndices), TimeSpan.FromSeconds(10));
+            if (configManager.Get().Interval < 10)
+                throw new ConfigException("Interval cannot be lower then 10 seconds");
+
+            RepeatAction(() => RunOnce(stockIndices), TimeSpan.FromSeconds(configManager.Get().Interval));
         }
 
         private async void RepeatAction(Action action, TimeSpan interval)
