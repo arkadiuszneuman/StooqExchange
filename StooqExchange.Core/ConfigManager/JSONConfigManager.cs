@@ -2,6 +2,7 @@ using System.IO;
 using System.Reflection;
 using Newtonsoft.Json;
 using StooqExchange.Core.Logger;
+using StooqExchange.Core.Exceptions;
 
 namespace StooqExchange.Core.ConfigManager
 {
@@ -17,20 +18,27 @@ namespace StooqExchange.Core.ConfigManager
 
         public virtual Config Load()
         {
-            if (!File.Exists(Path))
+            try
             {
-                loadedConfig = new Config();
-                Save(loadedConfig);
-                return loadedConfig;
+                if (!File.Exists(Path))
+                {
+                    loadedConfig = new Config();
+                    Save(loadedConfig);
+                    return loadedConfig;
+                }
+
+                logger.Info("Loading config");
+                string json = File.ReadAllText(Path);
+                var config = JsonConvert.DeserializeObject<Config>(json);
+
+                logger.Info("Config loaded");
+
+                return loadedConfig = config;
             }
-
-            logger.Info("Loading config");
-            string json = File.ReadAllText(Path);
-            var config = JsonConvert.DeserializeObject<Config>(json);
-
-            logger.Info("Config loaded");
-
-            return loadedConfig = config;
+            catch (JsonReaderException)
+            {
+                throw new ConfigException("Invalid config file");
+            }
         }
 
         public virtual Config Get()
