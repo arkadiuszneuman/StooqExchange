@@ -31,7 +31,7 @@ namespace StooqExchange.Core.ExchangeRateArchiveManager
         public virtual IEnumerable<ExchangeRate> Load()
         {
             if (!File.Exists(Path))
-                return Enumerable.Empty<ExchangeRate>();
+                return loadedExchangeRates = Enumerable.Empty<ExchangeRate>().ToList();
 
             logger.Info("Loading data archive");
             string json = File.ReadAllText(Path);

@@ -18,7 +18,11 @@ namespace StooqExchange.Core.ConfigManager
         public virtual Config Load()
         {
             if (!File.Exists(Path))
-                return new Config();
+            {
+                loadedConfig = new Config();
+                Save(loadedConfig);
+                return loadedConfig;
+            }
 
             logger.Info("Loading config");
             string json = File.ReadAllText(Path);
