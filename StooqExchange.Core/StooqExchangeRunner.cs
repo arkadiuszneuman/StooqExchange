@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.PlatformAbstractions;
 using StooqExchange.Core.DecisionMaker;
 using StooqExchange.Core.Exceptions;
-using StooqExchange.Core.ExchangeRateSaver;
+using StooqExchange.Core.ExchangeRateArchiveManager;
 using StooqExchange.Core.Logger;
 
 namespace StooqExchange.Core
@@ -15,7 +15,7 @@ namespace StooqExchange.Core
     public class StooqExchangeRunner
     {
         private readonly IExchangeFinder exchangeFinder;
-        private readonly IExchangeRateFileManager fileManager;
+        private readonly IExchangeRateArchiveManager archiveManager;
         private readonly INewExchangeRateDecisionMaker decisionMaker;
         private readonly IStooqLogger logger;
 
@@ -23,11 +23,11 @@ namespace StooqExchange.Core
         private bool isActionExecuting;
         private bool stopExecuting;
 
-        public StooqExchangeRunner(IExchangeFinder exchangeFinder, IExchangeRateFileManager fileManager,
+        public StooqExchangeRunner(IExchangeFinder exchangeFinder, IExchangeRateArchiveManager archiveManager,
             INewExchangeRateDecisionMaker decisionMaker, IStooqLogger logger)
         {
             this.exchangeFinder = exchangeFinder;
-            this.fileManager = fileManager;
+            this.archiveManager = archiveManager;
             this.decisionMaker = decisionMaker;
             this.logger = logger;
         }
@@ -44,7 +44,7 @@ namespace StooqExchange.Core
                     isActionExecuting = true;
                 }
 
-                List<ExchangeRate> exchangeRates = fileManager.Get().ToList();
+                List<ExchangeRate> exchangeRates = archiveManager.Get().ToList();
                 bool saveValues = false;
 
                 foreach (string stockIndex in stockIndices)
@@ -76,7 +76,7 @@ namespace StooqExchange.Core
                 }
 
                 if (saveValues)
-                    fileManager.Save(exchangeRates);
+                    archiveManager.Save(exchangeRates);
 
                 lock (syncObject)
                     isActionExecuting = false;

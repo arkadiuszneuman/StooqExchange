@@ -1,20 +1,18 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 using StooqExchange.Core.Logger;
 
-namespace StooqExchange.Core.ExchangeRateSaver
+namespace StooqExchange.Core.ExchangeRateArchiveManager
 {
-    public class JSONExchangeRateFileManager : IExchangeRateFileManager
+    public class JSONExchangeRateArchiveManager : IExchangeRateArchiveManager
     {
         private readonly IStooqLogger logger;
         private ICollection<ExchangeRate> loadedExchangeRates;
 
-        public JSONExchangeRateFileManager(IStooqLogger logger)
+        public JSONExchangeRateArchiveManager(IStooqLogger logger)
         {
             this.logger = logger;
         }
@@ -41,7 +39,7 @@ namespace StooqExchange.Core.ExchangeRateSaver
 
             logger.Info("Data archive loaded");
 
-            return exchangeRates ?? Enumerable.Empty<ExchangeRate>();
+            return loadedExchangeRates = exchangeRates.ToList() ?? Enumerable.Empty<ExchangeRate>().ToList();
         }
 
         public virtual IEnumerable<ExchangeRate> Get()

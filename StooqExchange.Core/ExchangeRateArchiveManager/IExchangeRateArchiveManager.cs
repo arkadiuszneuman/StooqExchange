@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 
-namespace StooqExchange.Core.ExchangeRateSaver
+namespace StooqExchange.Core.ExchangeRateArchiveManager
 {
-    public interface IExchangeRateFileManager
+    public interface IExchangeRateArchiveManager
     {
         void Save(IEnumerable<ExchangeRate> exchangeRate);
         IEnumerable<ExchangeRate> Load();

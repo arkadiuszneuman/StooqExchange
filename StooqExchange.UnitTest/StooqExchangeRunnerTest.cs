@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Moq;
 using StooqExchange.Core;
 using StooqExchange.Core.ExchangeRateFinder;
-using StooqExchange.Core.ExchangeRateSaver;
+using StooqExchange.Core.ExchangeRateArchiveManager;
 using Xunit;
 using StooqExchange.Core.DecisionMaker;
 using System.Linq;
@@ -15,15 +15,16 @@ namespace StooqExchange.UnitTest
     public class StooqExchangeRunnerTest
     {
         private readonly Mock<IExchangeFinder> exchangeFinderMock = new Mock<IExchangeFinder>();
-        private readonly Mock<IExchangeRateFileManager> exchangeRateFileManagerMock = new Mock<IExchangeRateFileManager>();
+        private readonly Mock<JSONExchangeRateArchiveManager> exchangeRateArchiveManagerMock;
         private readonly Mock<INewExchangeRateDecisionMaker> decisionMakerMock = new Mock<INewExchangeRateDecisionMaker>();
         private readonly Mock<IStooqLogger> stooqLoggerMock = new Mock<IStooqLogger>();
         private readonly StooqExchangeRunner exchangeRunner;
 
         public StooqExchangeRunnerTest()
         {
+            exchangeRateArchiveManagerMock = new Mock<JSONExchangeRateArchiveManager>(stooqLoggerMock.Object);
             exchangeRunner = new StooqExchangeRunner(exchangeFinderMock.Object,
-                exchangeRateFileManagerMock.Object, decisionMakerMock.Object, stooqLoggerMock.Object);
+                exchangeRateArchiveManagerMock.Object, decisionMakerMock.Object, stooqLoggerMock.Object);
         }
 
         [Fact]
@@ -41,7 +42,7 @@ namespace StooqExchange.UnitTest
         {
             exchangeRunner.RunOnce("WIG", "WIG20", "WIG20 Fut");
 
-            exchangeRateFileManagerMock.Verify(x => x.Get(), Times.Once);
+            exchangeRateArchiveManagerMock.Verify(x => x.Get(), Times.Once);
         }
 
         [Fact]
@@ -51,7 +52,7 @@ namespace StooqExchange.UnitTest
             ExchangeRate exchangeRateWIG = exchangeRates.First();
             ExchangeRate exchangeRateWIG20 = exchangeRates.Last();
 
-            exchangeRateFileManagerMock.Setup(x => x.Get())
+            exchangeRateArchiveManagerMock.Setup(x => x.Get())
                 .Returns(new[] { exchangeRateWIG, exchangeRateWIG20 });
 
             ExchangeRateValue newExchangeRateWIG = new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56);
@@ -74,7 +75,7 @@ namespace StooqExchange.UnitTest
             ExchangeRate exchangeRateWIG = exchangeRates.First();
             ExchangeRate exchangeRateWIG20 = exchangeRates.Last();
 
-            exchangeRateFileManagerMock.Setup(x => x.Get())
+            exchangeRateArchiveManagerMock.Setup(x => x.Get())
                 .Returns(exchangeRates);
 
             ExchangeRateValue newExchangeRateWIG = new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56);
@@ -91,7 +92,7 @@ namespace StooqExchange.UnitTest
 
             exchangeRunner.RunOnce("WIG", "WIG20");
 
-            exchangeRateFileManagerMock.Verify(x => x.Save(exchangeRates), Times.Once);
+            exchangeRateArchiveManagerMock.Verify(x => x.Save(exchangeRates), Times.Once);
         }
 
         [Fact]
@@ -101,7 +102,7 @@ namespace StooqExchange.UnitTest
             ExchangeRate exchangeRateWIG = exchangeRates.First();
             ExchangeRate exchangeRateWIG20 = exchangeRates.Last();
 
-            exchangeRateFileManagerMock.Setup(x => x.Get())
+            exchangeRateArchiveManagerMock.Setup(x => x.Get())
                 .Returns(exchangeRates);
 
             ExchangeRateValue newExchangeRateWIG = new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56);
@@ -118,7 +119,7 @@ namespace StooqExchange.UnitTest
 
             exchangeRunner.RunOnce("WIG", "WIG20");
 
-            exchangeRateFileManagerMock.Verify(x => x.Save(exchangeRates), Times.Never);
+            exchangeRateArchiveManagerMock.Verify(x => x.Save(exchangeRates), Times.Never);
         }
 
         [Fact]
@@ -128,7 +129,7 @@ namespace StooqExchange.UnitTest
             ExchangeRate exchangeRateWIG = exchangeRates.First();
             ExchangeRate exchangeRateWIG20 = exchangeRates.Last();
 
-            exchangeRateFileManagerMock.Setup(x => x.Get())
+            exchangeRateArchiveManagerMock.Setup(x => x.Get())
                 .Returns(exchangeRates);
 
             ExchangeRateValue newExchangeRateWIG = new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56);
@@ -147,7 +148,7 @@ namespace StooqExchange.UnitTest
             expected.First().Values.Add(new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56));
             expected.Last().Values.Add(new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)6412.23));
             IEnumerable<ExchangeRate> savedExchangeRates = null;
-            exchangeRateFileManagerMock.Setup(x => x.Save(It.IsAny<List<ExchangeRate>>()))
+            exchangeRateArchiveManagerMock.Setup(x => x.Save(It.IsAny<List<ExchangeRate>>()))
                 .Callback<IEnumerable<ExchangeRate>>((e) => savedExchangeRates = e);
 
             exchangeRunner.RunOnce("WIG", "WIG20");
@@ -162,7 +163,7 @@ namespace StooqExchange.UnitTest
             ExchangeRate exchangeRateWIG = exchangeRates.First();
             ExchangeRate exchangeRateWIG20 = exchangeRates.Last();
 
-            exchangeRateFileManagerMock.Setup(x => x.Get())
+            exchangeRateArchiveManagerMock.Setup(x => x.Get())
                 .Returns(exchangeRates);
 
             ExchangeRateValue newExchangeRateWIG = new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56);
@@ -180,7 +181,7 @@ namespace StooqExchange.UnitTest
             var expected = GetExchangeRates().ToList();
             expected.First().Values.Add(new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56));
             IEnumerable<ExchangeRate> savedExchangeRates = null;
-            exchangeRateFileManagerMock.Setup(x => x.Save(It.IsAny<List<ExchangeRate>>()))
+            exchangeRateArchiveManagerMock.Setup(x => x.Save(It.IsAny<List<ExchangeRate>>()))
                 .Callback<IEnumerable<ExchangeRate>>((e) => savedExchangeRates = e);
 
             exchangeRunner.RunOnce("WIG", "WIG20");
@@ -194,7 +195,7 @@ namespace StooqExchange.UnitTest
             List<ExchangeRate> exchangeRates = new List<ExchangeRate>(new[] { GetExchangeRates().First() });
             ExchangeRate exchangeRateWIG = exchangeRates.First();
 
-            exchangeRateFileManagerMock.Setup(x => x.Get())
+            exchangeRateArchiveManagerMock.Setup(x => x.Get())
                 .Returns(exchangeRates);
 
             ExchangeRateValue newExchangeRateWIG = new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)1234.56);
@@ -212,7 +213,7 @@ namespace StooqExchange.UnitTest
             expected.Add(new ExchangeRate("WIG20", new List<ExchangeRateValue>()
                 { new ExchangeRateValue(new DateTime(2016, 1, 4), (decimal)6412.23) }));
             IEnumerable<ExchangeRate> savedExchangeRates = null;
-            exchangeRateFileManagerMock.Setup(x => x.Save(It.IsAny<List<ExchangeRate>>()))
+            exchangeRateArchiveManagerMock.Setup(x => x.Save(It.IsAny<List<ExchangeRate>>()))
                 .Callback<IEnumerable<ExchangeRate>>((e) => savedExchangeRates = e);
 
             exchangeRunner.RunOnce("WIG", "WIG20");

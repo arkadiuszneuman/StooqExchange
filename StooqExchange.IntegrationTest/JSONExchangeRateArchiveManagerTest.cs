@@ -1,4 +1,4 @@
-﻿using StooqExchange.Core.ExchangeRateSaver;
+﻿using StooqExchange.Core.ExchangeRateArchiveManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,19 +12,18 @@ using StooqExchange.Core.Logger;
 
 namespace StooqExchange.IntegrationTest
 {
-    public class JSONExchangeRateFileManagerTest
+    public class JSONExchangeRateArchiveManagerTest
     {
         private readonly Mock<IStooqLogger> loggerMock = new Mock<IStooqLogger>();
-        private readonly JSONExchangeRateFileManager fileManager;
+        private readonly JSONExchangeRateArchiveManager fileManager;
 
-
-        public JSONExchangeRateFileManagerTest()
+        public JSONExchangeRateArchiveManagerTest()
         {
             var config = new ConfigurationBuilder()
                 .AddEnvironmentVariables("APPDATA")
                 .Build();
 
-            fileManager = new JSONExchangeRateFileManager(loggerMock.Object);
+            fileManager = new JSONExchangeRateArchiveManager(loggerMock.Object);
             fileManager.Path = Path.Combine(config.GetChildren().First().Value, "exchange-rates.json");
         }
 
@@ -55,7 +54,7 @@ namespace StooqExchange.IntegrationTest
         [Theory, MemberData("Data")]
         public void JSONExchangeRateFileManager_get_should_load_data_once(ExchangeRate[] expectedExchangeRates, string json)
         {
-            Mock<JSONExchangeRateFileManager> fileManagerMock = new Mock<JSONExchangeRateFileManager>(loggerMock.Object)
+            Mock<JSONExchangeRateArchiveManager> fileManagerMock = new Mock<JSONExchangeRateArchiveManager>(loggerMock.Object)
             {
                 CallBase = true
             };
@@ -74,7 +73,7 @@ namespace StooqExchange.IntegrationTest
         [Theory, MemberData("Data")]
         public void JSONExchangeRateFileManager_get_should_load_valid_data(ExchangeRate[] expectedExchangeRates, string json)
         {
-            Mock<JSONExchangeRateFileManager> fileManagerMock = new Mock<JSONExchangeRateFileManager>(loggerMock.Object)
+            Mock<JSONExchangeRateArchiveManager> fileManagerMock = new Mock<JSONExchangeRateArchiveManager>(loggerMock.Object)
             {
                 CallBase = true
             };

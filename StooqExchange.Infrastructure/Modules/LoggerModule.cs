@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using StooqExchange.Core.ExchangeRateSaver;
 using StooqExchange.Core.Logger;
 
 namespace StooqExchange.Infrastructure.Modules

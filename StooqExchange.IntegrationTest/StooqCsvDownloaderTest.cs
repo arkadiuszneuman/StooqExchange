@@ -27,7 +27,7 @@ namespace StooqExchange.IntegrationTest
 
             ExchangeRateFindException exception = Assert.ThrowsAsync<ExchangeRateFindException>(
                 async () => await downloader.DownloadAsync("index_doesnt_exists")).Result;
-            
+
             Assert.Equal("Cannot find index index_doesnt_exists", exception.Message);
         }
 
@@ -43,7 +43,22 @@ namespace StooqExchange.IntegrationTest
 
             Assert.Equal(8, result.Length);
             Assert.Equal("WIG", result[0]);
-            Assert.Equal(DateTime.Today, Convert.ToDateTime(result[1]));
+
+            DateTime expectedDate;
+            switch (DateTime.Today.DayOfWeek)
+            {
+                case DayOfWeek.Saturday:
+                    expectedDate = DateTime.Today.Subtract(new TimeSpan(1, 0, 0));
+                    break;
+                case DayOfWeek.Sunday:
+                    expectedDate = DateTime.Today.Subtract(new TimeSpan(2, 0, 0));
+                    break;
+                default:
+                    expectedDate = DateTime.Today;
+                    break;
+            }
+
+            Assert.Equal(expectedDate.Date, Convert.ToDateTime(result[1]));
         }
     }
 }

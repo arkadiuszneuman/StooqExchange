@@ -1,18 +1,18 @@
 ﻿using Autofac;
 using StooqExchange.Core;
-using StooqExchange.Core.ExchangeRateSaver;
+using StooqExchange.Core.ExchangeRateArchiveManager;
 
 namespace StooqExchange.Infrastructure.Modules
 {
-    public class FileManagerModule : Module
+    public class ArchiveManagerModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
             base.Load(builder);
 
-            builder.RegisterType<JSONExchangeRateFileManager>()
+            builder.RegisterType<JSONExchangeRateArchiveManager>()
                 .SingleInstance()
-                .As<IExchangeRateFileManager>();
+                .As<IExchangeRateArchiveManager>();
         }
     }
 }
