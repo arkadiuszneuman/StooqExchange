@@ -8,6 +8,9 @@ using NLog.Targets;
 
 namespace StooqExchange.Core.Logger
 {
+    /// <summary>
+    /// Class is responsible for log messages using NLog.
+    /// </summary>
     public class NLogLogger : IStooqLogger
     {
         private readonly NLog.Logger logger;

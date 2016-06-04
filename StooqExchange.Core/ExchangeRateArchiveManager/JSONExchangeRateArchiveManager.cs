@@ -7,6 +7,10 @@ using StooqExchange.Core.Logger;
 
 namespace StooqExchange.Core.ExchangeRateArchiveManager
 {
+    /// <summary>
+    /// Class is responsible for save and load rate archive to/from JSON file. 
+    /// By default file is saved to application directory as exchange-rates.json.
+    /// </summary>
     public class JSONExchangeRateArchiveManager : IExchangeRateArchiveManager
     {
         private readonly IStooqLogger logger;

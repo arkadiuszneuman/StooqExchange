@@ -4,6 +4,9 @@ using StooqExchange.Core.Exceptions;
 
 namespace StooqExchange.Core.HttpDownloader
 {
+    /// <summary>
+    /// Class is responsible for download csv file from stooq.pl site.
+    /// </summary>
     public class StooqCsvDownloader : IHttpDownloader
     {
         public async Task<string> DownloadAsync(string stockIndex)

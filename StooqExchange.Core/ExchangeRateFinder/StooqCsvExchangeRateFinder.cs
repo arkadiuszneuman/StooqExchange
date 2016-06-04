@@ -6,6 +6,9 @@ using StooqExchange.Core.Logger;
 
 namespace StooqExchange.Core.ExchangeRateFinder
 {
+    /// <summary>
+    /// Class is responsible for download and parse exchange value from stooq.pl site.
+    /// </summary>
     public class StooqCsvExchangeRateFinder : IExchangeFinder
     {
         private readonly IHttpDownloader httpDownloader;

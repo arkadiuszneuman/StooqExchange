@@ -4,6 +4,10 @@ using StooqExchange.Core.Exceptions;
 
 namespace StooqExchange.Core.DecisionMaker
 {
+    /// <summary>
+    /// Class is responsible for decision if new exchange rate should be added to values in exchange rates archive.
+    /// Return true if new value is different then previous value.
+    /// </summary>
     public class DifferentLastRateNewValueDecisionMaker : INewValueDecisionMaker
     {
         public bool ShouldRateBeAdd(ExchangeRate exchangeRate, ExchangeRateValue newExchangeRate)

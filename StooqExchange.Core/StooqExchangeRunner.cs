@@ -44,7 +44,7 @@ namespace StooqExchange.Core
                     if (isActionExecuting)
                         return;
 
-                    isActionExecuting = true;
+                    isActionExecuting = true; //used for too many queries
                 }
 
                 List<ExchangeRate> exchangeRates = archiveManager.Get().ToList();

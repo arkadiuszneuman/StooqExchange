@@ -6,6 +6,10 @@ using StooqExchange.Core.Exceptions;
 
 namespace StooqExchange.Core.ConfigManager
 {
+    /// <summary>
+    /// Class is responsible for save and load config to/from JSON file. 
+    /// By default file is saved to application directory as config.json.
+    /// </summary>
     public class JSONConfigManager : IConfigManager
     {
         private readonly IStooqLogger logger;
