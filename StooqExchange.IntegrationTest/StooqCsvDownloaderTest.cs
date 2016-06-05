@@ -48,10 +48,10 @@ namespace StooqExchange.IntegrationTest
             switch (DateTime.Today.DayOfWeek)
             {
                 case DayOfWeek.Saturday:
-                    expectedDate = DateTime.Today.Subtract(new TimeSpan(1, 0, 0));
+                    expectedDate = DateTime.Today.Subtract(new TimeSpan(1, 0, 0, 0));
                     break;
                 case DayOfWeek.Sunday:
-                    expectedDate = DateTime.Today.Subtract(new TimeSpan(2, 0, 0));
+                    expectedDate = DateTime.Today.Subtract(new TimeSpan(2, 0, 0, 0));
                     break;
                 default:
                     expectedDate = DateTime.Today;
